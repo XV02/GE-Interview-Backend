@@ -16,10 +16,14 @@ export class Employee extends BaseEntity {
     @Column()
     pronouns: string;
 
-    @Column()
+    @Column({
+        nullable: true
+    })
     instagramHandle: string;
 
-    @Column()
+    @Column({
+        nullable: true
+    })
     profilePicture: string;
 
     @Column()
