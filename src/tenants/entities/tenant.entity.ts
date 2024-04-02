@@ -1,4 +1,5 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Employee } from "src/employee/entities/employee.entity";
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity({ name: "tenants" })
 export class Tenant extends BaseEntity {
@@ -15,4 +16,7 @@ export class Tenant extends BaseEntity {
 
     @Column()
     password: string;
+
+    @OneToMany(() => Employee, employee => employee.id)
+    employees: Employee[];
 }

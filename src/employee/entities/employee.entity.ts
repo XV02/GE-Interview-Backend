@@ -1,4 +1,5 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Tenant } from "src/tenants/entities/tenant.entity";
+import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity({ name: "employees" })
 export class Employee extends BaseEntity {
@@ -23,4 +24,13 @@ export class Employee extends BaseEntity {
 
     @Column()
     xp: number;
+
+    @Column()
+    tenantId: string;
+
+    @ManyToOne(() => Tenant, tenant => tenant.id, {
+        onDelete: "CASCADE"
+    })
+    @JoinColumn({ name: "tenantId" })
+    tenant: Tenant;
 }
