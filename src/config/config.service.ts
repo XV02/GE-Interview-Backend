@@ -1,11 +1,11 @@
 import { config } from "dotenv";
 import path from "path";
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
+import { Tenant } from "src/tenants/entities/tenant.entity";
+import { TenantTable1712032616820 } from "src/migration/1712032616820-TenantTable";
 
 
-config({
-    path: path.resolve(__dirname, '../../.env'),
-});
+config();
 
 class ConfigService {
     constructor(private env: { [k: string]: string | undefined }) { }
@@ -45,8 +45,16 @@ class ConfigService {
             logging: true,
             migrationsTableName: "migration",
             
-            entities: [],
-            migrations: [],
+            entities: [
+                Tenant,
+            ],
+            migrations: [
+                TenantTable1712032616820,
+            ],
+
+            cli: {
+                migrationsDir: "src/migration",
+            },
         };
     }
 }
