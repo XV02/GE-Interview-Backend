@@ -5,12 +5,15 @@ import { Tenant } from './entities/tenant.entity';
 import { Repository } from 'typeorm';
 
 import * as bcrypt from 'bcrypt';
+import { TenantLoginDto } from './dto/tenant-login';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class TenantsService {
   constructor(
     @InjectRepository(Tenant)
     private tenantRepository: Repository<Tenant>,
+    private jwtService: JwtService,
   ) {}
 
   async create(createTenantDto: CreateTenantDto) {
@@ -31,6 +34,34 @@ export class TenantsService {
     return {
       message: 'Tenant created successfully',
       status: HttpStatus.CREATED,
+    };
+  }
+
+  async tenantLogin(tenantLoginDto: TenantLoginDto) {
+    const tenant = await this.tenantRepository.createQueryBuilder('tenant')
+      .where('tenant.email = :email', { email: tenantLoginDto.email })
+      .getRawOne();
+
+    if (!tenant) {
+      throw new HttpException('Tenant not found', 404);
+    }
+
+    const isPasswordValid = await bcrypt.compare(tenantLoginDto.password, tenant.password);
+
+    if (!isPasswordValid) {
+      throw new HttpException('Invalid credentials', 401);
+    }
+
+    const payload = {
+      id: tenant.id,
+      email: tenant.email,
+    };
+
+
+
+    return {
+      token: this.jwtService.sign(payload),
+      status: HttpStatus.OK,
     };
   }
 
