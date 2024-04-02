@@ -1,26 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
-import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Employee } from './entities/employee.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class EmployeeService {
-  create(createEmployeeDto: CreateEmployeeDto) {
-    return 'This action adds a new employee';
-  }
+  constructor(
+    @InjectRepository(Employee)
+    private employeeRepository: Repository<Employee>,
+  ) {}
 
-  findAll() {
-    return `This action returns all employee`;
-  }
+  async create(createEmployeeDto: CreateEmployeeDto, tenantId: string) {
+    const employeeSearch = await this.employeeRepository.createQueryBuilder('employee')
+      .where('employee.email = :email', { email: createEmployeeDto.email })
+      .getRawOne();
 
-  findOne(id: number) {
-    return `This action returns a #${id} employee`;
-  }
+    if (employeeSearch) {
+      throw new HttpException('Employee already exists', 400);
+    }
 
-  update(id: number, updateEmployeeDto: UpdateEmployeeDto) {
-    return `This action updates a #${id} employee`;
-  }
+    const employeePayload = {
+      ...createEmployeeDto,
+      xp: 0,
+      tenantId: tenantId,
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} employee`;
+    const employee = this.employeeRepository.create(employeePayload);
+
+    await this.employeeRepository.save(employee);
+
+    
+    return {
+      message: 'Employee created successfully',
+      status: 201,
+    };
   }
 }
