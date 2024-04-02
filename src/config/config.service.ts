@@ -3,6 +3,8 @@ import path from "path";
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
 import { Tenant } from "src/tenants/entities/tenant.entity";
 import { TenantTable1712032616820 } from "src/migration/1712032616820-TenantTable";
+import { Employee } from "src/employee/entities/employee.entity";
+import { EmployeeTable1712033468576 } from "src/migration/1712033468576-EmployeeTable";
 
 
 config();
@@ -47,9 +49,11 @@ class ConfigService {
             
             entities: [
                 Tenant,
+                Employee,
             ],
             migrations: [
                 TenantTable1712032616820,
+                EmployeeTable1712033468576,
             ],
 
             cli: {
