@@ -40,6 +40,11 @@ export class TenantsService {
   async tenantLogin(tenantLoginDto: TenantLoginDto) {
     const tenant = await this.tenantRepository.createQueryBuilder('tenant')
       .where('tenant.email = :email', { email: tenantLoginDto.email })
+      .select([
+        'tenant.id AS "id"',
+        'tenant.email AS "email"',
+        'tenant.password AS "password"'
+      ])
       .getRawOne();
 
     if (!tenant) {
