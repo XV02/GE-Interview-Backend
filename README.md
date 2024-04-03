@@ -7,6 +7,12 @@
 - How can we make it scalable to cope with millions of XP entries across thousands of tenants?
   The system by itself can handle it perfectly, (Maybe another system like Go can do it more efficiently). But in general the respinsability will be on the distribution of the system in the cloud or server.
 
+## NOTE
+For installing dependencies use the following command, since the code uses an older version of typeorm.
+```bash
+npm i --legacy-peer-deps
+```
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
