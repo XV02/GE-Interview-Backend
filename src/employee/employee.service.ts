@@ -4,12 +4,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Employee } from './entities/employee.entity';
 import { Repository } from 'typeorm';
 import { XpDto } from './dto/xp.dto';
+import { Tenant } from 'src/tenants/entities/tenant.entity';
 
 @Injectable()
 export class EmployeeService {
   constructor(
     @InjectRepository(Employee)
     private employeeRepository: Repository<Employee>,
+    @InjectRepository(Tenant)
+    private tenantRepository: Repository<Tenant>,
   ) {}
 
   async create(createEmployeeDto: CreateEmployeeDto, tenantId: string) {
@@ -31,6 +34,9 @@ export class EmployeeService {
 
     await this.employeeRepository.save(employee);
 
+    await this.tenantRepository.update(tenantId, {
+      lastInteraction: new Date(),
+    });
     
     return {
       message: 'Employee created successfully',
@@ -73,6 +79,10 @@ export class EmployeeService {
       .set({ xp: updatedXp })
       .where('id = :id', { id: xpDto.employeeId })
       .execute();
+
+    await this.tenantRepository.update(tenantId, {
+      lastInteraction: new Date(),
+    });
 
     return {
       message: 'XP added successfully',
