@@ -1,3 +1,12 @@
+## Interview questions
+- Should we validate the instagram handle, how could we do that?
+  Yes, we can use Meta's developer tools to check the handle and confirm it.
+- Can you think of any future improvements to the system, functional or non-functional?
+  Give access to the tenant from the same platform that shows the leaderboard to login and add users. Add the options to delete and update the users. Add a rank system to add more depth to the gamification.
+  Modify the XP system to base it monthly/weekly so people that fall behind feel the opportunity to do stuff every time a period ends. Personalize the leaderboard based on the tenant.
+- How can we make it scalable to cope with millions of XP entries across thousands of tenants?
+  The system by itself can handle it perfectly, (Maybe another system like Go can do it more efficiently). But in general the respinsability will be on the distribution of the system in the cloud or server.
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
