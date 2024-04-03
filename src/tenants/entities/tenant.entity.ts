@@ -17,6 +17,9 @@ export class Tenant extends BaseEntity {
     @Column()
     password: string;
 
+    @Column()
+    lastInteraction: Date;
+
     @OneToMany(() => Employee, employee => employee.id)
     employees: Employee[];
 }

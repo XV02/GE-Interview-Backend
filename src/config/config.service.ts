@@ -7,6 +7,7 @@ import { Employee } from "src/employee/entities/employee.entity";
 import { EmployeeTable1712033468576 } from "src/migration/1712033468576-EmployeeTable";
 import { TableRelation1712033682196 } from "src/migration/1712033682196-TableRelation";
 import { AddNullableFields1712036474111 } from "src/migration/1712036474111-AddNullableFields";
+import { LastInteractionAdded1712120220066 } from "src/migration/1712120220066-LastInteractionAdded";
 
 
 config();
@@ -58,6 +59,7 @@ class ConfigService {
                 EmployeeTable1712033468576,
                 TableRelation1712033682196,
                 AddNullableFields1712036474111,
+                LastInteractionAdded1712120220066,
             ],
 
             cli: {

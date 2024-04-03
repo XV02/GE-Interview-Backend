@@ -8,6 +8,8 @@ import * as bcrypt from 'bcrypt';
 import { TenantLoginDto } from './dto/tenant-login';
 import { JwtService } from '@nestjs/jwt';
 
+import cron from 'node-cron';
+
 @Injectable()
 export class TenantsService {
   constructor(
@@ -27,7 +29,12 @@ export class TenantsService {
 
     createTenantDto.password = await this.saltPassword(createTenantDto.password);
 
-    const tenant = this.tenantRepository.create(createTenantDto);
+    const payload = {
+      ...createTenantDto,
+      lastInteraction: new Date(),
+    };
+
+    const tenant = this.tenantRepository.create(payload);
 
     await this.tenantRepository.save(tenant);
 
@@ -62,7 +69,9 @@ export class TenantsService {
       email: tenant.email,
     };
 
-
+    await this.tenantRepository.update(tenant.id, {
+      lastInteraction: new Date(),
+    });
 
     return {
       token: this.jwtService.sign(payload),
@@ -76,5 +85,28 @@ export class TenantsService {
 
   async saltPassword(password: string) {
     return bcrypt.hash(password, 10);
+  }
+
+  async deleteInactiveTenants() {
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+    const inactiveTenants = await this.tenantRepository.createQueryBuilder('tenant')
+      .where('tenant.lastInteraction < :lastInteraction', { lastInteraction: oneYearAgo })
+      .select([
+        'tenant.id AS "id"',
+      ])
+      .getRawMany();
+    
+    inactiveTenants.forEach(async tenant => {
+      await this.tenantRepository.delete(tenant.id);
+    });
+  }
+
+  // Do a cron job that runs every day at midnight to delete inactive tenants
+  cronJob() {
+    cron.schedule('0 0 * * *', () => {
+      this.deleteInactiveTenants();
+    });
   }
 }
